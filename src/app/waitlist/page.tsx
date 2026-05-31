@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -22,6 +21,19 @@ export default function Waitlist() {
 
         // Simulate API call to join waitlist
         setTimeout(() => {
+            // Save to localStorage for Admin Dashboard
+            const waitlist = JSON.parse(localStorage.getItem("waitlist") || "[]");
+            waitlist.push({
+                id: "WL-" + Math.floor(Math.random() * 1000000),
+                name,
+                email,
+                course,
+                experience,
+                paymentMethod,
+                date: new Date().toISOString().split('T')[0]
+            });
+            localStorage.setItem("waitlist", JSON.stringify(waitlist));
+
             setIsSubmitting(false);
             setSuccess(true);
 
@@ -34,10 +46,6 @@ export default function Waitlist() {
 
     return (
         <div className="min-h-screen bg-transparent flex flex-col items-center justify-center px-4 py-20 relative overflow-hidden">
-            <Head>
-                <title>Join the Waitlist | ANISHXNJ Plays</title>
-            </Head>
-
             {/* Background elements */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-5xl max-h-[900px] bg-primary/20 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
 
@@ -60,8 +68,8 @@ export default function Waitlist() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            <h2 className="text-3xl font-bold text-white mb-4">You're on the list!</h2>
-                            <p className="text-gray-300 text-lg mb-6">We'll notify you as soon as the next cohort opens up.</p>
+                            <h2 className="text-3xl font-bold text-white mb-4">You&apos;re on the list!</h2>
+                            <p className="text-gray-300 text-lg mb-6">We&apos;ll notify you as soon as the next cohort opens up.</p>
                             <div className="w-full max-w-xs h-1 bg-white/10 rounded-full overflow-hidden">
                                 <div className="h-full bg-primary animate-progress"></div>
                             </div>
@@ -159,23 +167,6 @@ export default function Waitlist() {
                 </div>
             </div>
 
-            {/* Global styles fix for animations */}
-            <style jsx global>{`
-                @keyframes fade-in {
-                    from { opacity: 0; transform: scale(0.95); }
-                    to { opacity: 1; transform: scale(1); }
-                }
-                .animate-fade-in {
-                    animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-                }
-                @keyframes progress {
-                    from { width: 0%; }
-                    to { width: 100%; }
-                }
-                .animate-progress {
-                    animation: progress 3s linear forwards;
-                }
-            `}</style>
         </div>
     );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -12,31 +11,49 @@ export default function SignIn() {
     const [password, setPassword] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [error, setError] = useState("");
 
     const router = useRouter();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Simulate an API call
-        setTimeout(() => {
+        setError("");
+
+        try {
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: loginMethod === "email" ? email : undefined,
+                    phone: loginMethod === "phone" ? phone : undefined,
+                    password
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setIsSubmitting(false);
+                setError(data.error || "Invalid credentials. Please try again.");
+                return;
+            }
+
             setIsSubmitting(false);
             setSuccess(true);
 
-            // Redirect to home after 2 seconds
             setTimeout(() => {
                 router.push("/");
             }, 2000);
-        }, 1500);
+        } catch (err) {
+            setIsSubmitting(false);
+            setError("Network error occurred. Please try again.");
+        }
     };
 
     return (
         <div className="min-h-screen bg-transparent flex flex-col items-center justify-center px-4 relative overflow-hidden">
-            <Head>
-                <title>Sign In | ANISHXNJ Plays</title>
-            </Head>
-
             {/* Background elements */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl max-h-[800px] bg-primary/20 blur-[120px] rounded-full z-[-1] pointer-events-none"></div>
 
@@ -61,6 +78,12 @@ export default function SignIn() {
                             <p className="text-gray-400">Redirecting to home...</p>
                         </div>
                     ) : null}
+
+                    {error && (
+                        <div className="bg-red-500/10 border border-red-500/50 text-red-500 rounded-xl p-4 mb-6 text-sm text-center">
+                            {error}
+                        </div>
+                    )}
 
                     <div className="flex bg-white/5 rounded-xl p-1 mb-8">
                         <button
@@ -145,7 +168,7 @@ export default function SignIn() {
                     </form>
 
                     <p className="text-center text-gray-400 mt-8 text-sm">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <Link href="/sign-up" className="text-white font-medium hover:text-primary transition-colors">
                             Create Account
                         </Link>
@@ -153,16 +176,6 @@ export default function SignIn() {
                 </div>
             </div>
 
-            {/* Global styles fix for fade-in animation */}
-            <style jsx global>{`
-                @keyframes fade-in {
-                    from { opacity: 0; transform: scale(0.95); }
-                    to { opacity: 1; transform: scale(1); }
-                }
-                .animate-fade-in {
-                    animation: fade-in 0.3s ease-out forwards;
-                }
-            `}</style>
         </div>
     );
 }

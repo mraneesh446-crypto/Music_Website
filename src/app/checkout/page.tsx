@@ -21,6 +21,7 @@ export default function Checkout() {
     const [success, setSuccess] = useState(false);
     const [payerName, setPayerName] = useState("");
     const [remarks, setRemarks] = useState("");
+    const [orderNumber, setOrderNumber] = useState("");
     const router = useRouter();
 
     useEffect(() => {
@@ -28,11 +29,18 @@ export default function Checkout() {
         const savedCart = localStorage.getItem("anishxnj_cart");
         if (savedCart) {
             try {
-                setCart(JSON.parse(savedCart));
+                const parsedCart = JSON.parse(savedCart);
+                setTimeout(() => {
+                    setCart(parsedCart);
+                }, 0);
             } catch (e) {
                 console.error("Failed to parse cart", e);
             }
         }
+        // Generate a random order number once when the component mounts
+        setTimeout(() => {
+            setOrderNumber(Math.floor(Math.random() * 1000000).toString().padStart(6, '0'));
+        }, 0);
     }, []);
 
     const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
@@ -86,7 +94,7 @@ export default function Checkout() {
                         )}
                         <div className="flex justify-between text-sm mb-2 text-gray-400">
                             <span>Order Number</span>
-                            <span className="text-white font-mono">#{Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}</span>
+                            <span className="text-white font-mono">#{orderNumber}</span>
                         </div>
                         <div className="flex justify-between text-sm mb-2 text-gray-400">
                             <span>Amount Paid</span>

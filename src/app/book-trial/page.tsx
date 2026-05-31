@@ -62,7 +62,7 @@ export default function BookTrial() {
                                 </svg>
                             </div>
                             <h2 className="text-3xl font-bold text-white mb-4">Booking Confirmed!</h2>
-                            <p className="text-gray-300 text-lg mb-6">We've sent the details to your email. Get ready to jam!</p>
+                            <p className="text-gray-300 text-lg mb-6">We&apos;ve sent the details to your email. Get ready to jam!</p>
                             <div className="w-full max-w-xs h-1 bg-white/10 rounded-full overflow-hidden">
                                 <div className="h-full bg-primary animate-progress"></div>
                             </div>
